@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SecureApiWithJwt.Constants;
 using SecureApiWithJwt.Models;
 using SecureApiWithJwt.Services;
 
@@ -15,6 +17,19 @@ namespace SecureApiWithJwt.Controllers
         {
             _userService = userService;
         }
+
+        [HttpGet("GetAllUsers")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            return Ok(await _userService.GetAllUsers());
+        }
+
+        [HttpGet("GetAllRoles")]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            return Ok(await _userService.GetAllRoles());
+        }
+
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -44,18 +59,65 @@ namespace SecureApiWithJwt.Controllers
             return Ok(result);
         }
 
-        [HttpPost("addrole")]
-        public async Task<IActionResult> AddRole([FromBody] AddRoleModel model)
+        [HttpPost("addUserToRole")]
+        public async Task<IActionResult> AddUserToRole([FromBody] AddUserToRoleModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _userService.AddRole(model);
+            var result = await _userService.AddUserToRole(model);
 
             if (!string.IsNullOrEmpty(result))
                 return BadRequest(result);
 
             return Ok(model);
+        }
+
+        [HttpPost("AddNewRole")]
+        public async Task<IActionResult> AddNewRole([FromBody] AddNewRoleModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _userService.AddNewRole(model);
+
+            if (!string.IsNullOrEmpty(result))
+                return BadRequest(result);
+
+            return Ok(model);
+        }
+
+        [HttpDelete("DeleteUser")]
+        public async Task<IActionResult> DeleteUser([FromQuery] string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("Invalid user ID");
+
+            var result = await _userService.RemoveUser(userId);
+
+            return !string.IsNullOrEmpty(result) ? BadRequest(result) : Ok(userId);
+        }
+
+        [HttpDelete("DeleteRole")]
+        public async Task<IActionResult> DeleteRole([FromQuery] string roleName)
+        {
+            if (string.IsNullOrEmpty(roleName))
+                return BadRequest("Invalid role name!");
+
+            var result = await _userService.RemoveRole(roleName);
+
+            return !string.IsNullOrEmpty(result) ? BadRequest(result) : Ok(roleName);
+        }
+
+        [HttpDelete("DeleteUserFromRole")]
+        public async Task<IActionResult> DeleteUserFromRole([FromBody] AddUserToRoleModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _userService.RemoveUserFromRole(model);
+
+            return !string.IsNullOrEmpty(result) ? BadRequest(result) : Ok(model);
         }
     }
 }

@@ -5,6 +5,8 @@ C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\S
 C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\SecureApiWithJwt.runtimeconfig.json
 C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\SecureApiWithJwt.dll
 C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\SecureApiWithJwt.pdb
+C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\AutoMapper.dll
+C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\Humanizer.dll
 C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\MessagePack.dll
 C:\Users\nabil\source\repos\SecureApiWithJwt\SecureApiWithJwt\bin\Debug\net6.0\MessagePack.Annotations.dll

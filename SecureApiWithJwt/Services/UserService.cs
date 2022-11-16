@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,13 +17,15 @@ namespace SecureApiWithJwt.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMapper _mapper;
         private readonly JWT _jwt;
 
         public UserService(UserManager<ApplicationUser> userManager, IOptions<JWT> jwt,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager, IMapper mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _mapper = mapper;
             _jwt = jwt.Value;
         }
 
@@ -123,11 +126,10 @@ namespace SecureApiWithJwt.Services
             var users = await _userManager.Users.ToListAsync();
 
             List<UserInfoDto> usersDto = new List<UserInfoDto>();
+
             foreach (var user in users)
-            {
-                var userDto = await MapAppUserToUserDto(user);
-                usersDto.Add(userDto);
-            }
+                usersDto.Add(await MapAppUserToUserDto(user));
+
             return usersDto;
         }
 
@@ -165,12 +167,7 @@ namespace SecureApiWithJwt.Services
 
         private async Task<UserInfoDto> MapAppUserToUserDto(ApplicationUser user)
         {
-            var userDto = new UserInfoDto();
-            userDto.UserId = user.Id;
-            userDto.FirstName = user.FirstName;
-            userDto.LastName = user.LastName;
-            userDto.Email = user.Email;
-            userDto.UserName = user.UserName;
+            var userDto = _mapper.Map<UserInfoDto>(user);
             userDto.Roles = await _userManager.GetRolesAsync(user);
             return userDto;
         }

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using SecureApiWithJwt.Constants;
 using SecureApiWithJwt.Models;
 using SecureApiWithJwt.Services;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace SecureApiWithJwt.Controllers
 {
@@ -30,9 +32,35 @@ namespace SecureApiWithJwt.Controllers
             return Ok(await _userService.GetAllRoles());
         }
 
+        [Authorize]
+        [HttpGet("GetCurrentUser")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            return Ok(GetUserClaims());
+        }
+
+        private AuthenticationModel? GetUserClaims()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity is null)
+                return null;
+
+            var userClaims = identity.Claims;
+
+            return new AuthenticationModel
+            {
+                Message = "Claims Will Update when you Login again ",
+                UserId = userClaims.FirstOrDefault(o => o.Type == "uid")?.Value,
+                UserName = userClaims.FirstOrDefault(o => o.Type.ToLower().Contains("claims/nameidentifier"))?.Value,
+                Email = userClaims.FirstOrDefault(o => o.Type.ToLower().Contains("claims/emailaddress"))?.Value,
+                Roles = userClaims.Where(o => o.Type.ToLower().Contains("claims/role")).Select(o => o.Value)?.ToList(),
+                IsAuthenticated = true
+        };
+        }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> register([FromBody] RegisterModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
